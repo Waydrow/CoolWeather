@@ -1,6 +1,7 @@
 package com.waydrow.coolweather;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.waydrow.coolweather.db.City;
 import com.waydrow.coolweather.db.County;
 import com.waydrow.coolweather.db.Province;
+import com.waydrow.coolweather.util.API;
 import com.waydrow.coolweather.util.HttpUtil;
 import com.waydrow.coolweather.util.Utility;
 
@@ -95,6 +97,12 @@ public class ChooseAreaFragment extends Fragment {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                } else if (currentLevel == LEVEL_COUNTY) {
+                    String weatherId = countyList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id", weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
@@ -125,7 +133,7 @@ public class ChooseAreaFragment extends Fragment {
             listView.setSelection(0);
             currentLevel = LEVEL_PROVINCE;
         } else {
-            String address = "http://guolin.tech/api/china";
+            String address = API.HOST + "china";
             queryFromServer(address, "province");
         }
     }
@@ -146,7 +154,7 @@ public class ChooseAreaFragment extends Fragment {
             currentLevel = LEVEL_CITY;
         } else {
             int provinceCode = selectedProvince.getProvinceCode();
-            String address = "http://guolin.tech/api/china/" + provinceCode;
+            String address = API.HOST + "china/" + provinceCode;
             queryFromServer(address, "city");
         }
     }
@@ -168,7 +176,7 @@ public class ChooseAreaFragment extends Fragment {
         } else {
             int provinceCode = selectedProvince.getProvinceCode();
             int cityCode = selectedCity.getCityCode();
-            String address = "http://guolin.tech/api/china/" + provinceCode + "/" + cityCode;
+            String address = API.HOST + "china/" + provinceCode + "/" + cityCode;
             queryFromServer(address, "county");
         }
     }
